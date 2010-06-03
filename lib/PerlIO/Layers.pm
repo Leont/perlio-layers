@@ -28,35 +28,25 @@ sub has_flags {
 		my @results;
 		while (my ($name, $arguments, $flags) = $iterator->()) {
 			my $entry = $flags & $check_flag;
-			push @results, $entry if $entry;
+			return 1 if $entry;
 		}
-		return @results;
+		return 0;
 	}
 }
 
 sub lacks_flags {
-	my $check_flag = names_to_flags(@_);
+	my @args = @_;
+	my $func = has_flags(@args);
 	return sub {
-		my $iterator = shift;
-		while (my ($name, $arguments, $flags) = $iterator->()) {
-			my $entry = $flags & $check_flag;
-			return if $entry;
-		}
-		return 1;
+		return not $func->(@_);
 	}
 }
 
 my %is_binary = map { ( $_ => 1) } qw/unix stdio perlio crlf flock creat excl/;
 
+my $nonbinary_flags = names_to_flags('UTF8', 'CRLF');
+
 my %query_for = (
-	binary    => sub {
-		my $iterator = shift;
-		while (my ($name, $arguments, $flags) = $iterator->()) {
-			return if not $is_binary{$name};
-			return if $flags & names_to_flags('UTF8', 'CRLF');
-		}
-		return 1;
-	},
 	writeable => has_flags('CANWRITE'),
 	readable  => has_flags('CANREAD'),
 	buffered  => lacks_flags('UNBUF'),
@@ -64,19 +54,28 @@ my %query_for = (
 	temp      => has_flags('TEMP'),
 	crlf      => has_flags('CRLF'),
 	utf8      => has_flags('UTF8'),
+	binary    => sub {
+		my $iterator = shift;
+		while (my ($name, $arguments, $flags) = $iterator->()) {
+			return 0 if not $is_binary{$name} or $flags & $nonbinary_flags;
+		}
+		return 1;
+	},
 );
 
-use namespace::clean;
+use namespace::clean -except => [ qw/import/ ];
 
 sub query_handle {
-	my ($fh, $query_name) = @_;
+	my ($fh, $query_name, @args) = @_;
 	my @results;
 	my $query = $query_for{$query_name} or croak "Query $query_name isn't defined";
-	my $iterator = natatatime(3, PerlIO::get_layers($fh, details => 1));
-	return $query->($iterator);
+	my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
+	return $query->($iterator, @args);
 }
 
 1;    # End of PerlIO::Layers
+
+__END__
 
 =head1 NAME
 
@@ -88,14 +87,15 @@ Version 0.001
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
+ use PerlIO::Layers qw/query_handle/;
 
-Perhaps a little code snippet.
+ if (!query_handle(\*STDOUT, binary)) {
+     ...
+ }
 
-    use PerlIO::Layers;
+=head1 DESCRIPTION
 
-    my $foo = PerlIO::Layers->new();
-    ...
+Perl's filehandles are implemented as a stack of layers, with the bottom-most usually doing the actual IO and the higher ones doing buffering, encoding/decoding or transformations. PerlIO::Layers allows you to query the filehandle's properties concerning there layers.
 
 =head1 SUBROUTINES
 
@@ -158,8 +158,6 @@ L<http://cpanratings.perl.org/d/PerlIO-Layers>
 L<http://search.cpan.org/dist/PerlIO-Layers/>
 
 =back
-
-=head1 ACKNOWLEDGEMENTS
 
 =head1 LICENSE AND COPYRIGHT
 
