@@ -23,6 +23,7 @@ my $builder = Module::Build->new(
 	},
     add_to_cleanup      => [ 'PerlIO-Layers-*' ],
     create_makefile_pl  => 'small',
+	sign                => 1,
 );
 
 $builder->create_build_script();

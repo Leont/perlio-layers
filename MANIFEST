@@ -1,9 +1,13 @@
 Build.PL
 Changes
-MANIFEST
-README
 lib/PerlIO/Layers.pm
+lib/PerlIO/Layers.xs
+LICENSE
+Makefile.PL
+MANIFEST
+META.yml
+README
 t/00-load.t
-t/manifest.t
+t/10-basics.t
 t/pod-coverage.t
 t/pod.t

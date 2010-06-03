@@ -11,3 +11,7 @@ cover_db
 pod2htm*.tmp
 PerlIO-Layers-*
 *.swp
+*.o
+*.c
+Makefile.PL
+META.yml

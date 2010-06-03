@@ -12,3 +12,5 @@ PerlIO-Layers-.*
 ^lib/.*\.c$
 ^lib/.*\.o$
 ^.ignore
+.*\.o$
+.*\.c$
