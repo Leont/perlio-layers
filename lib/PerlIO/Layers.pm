@@ -12,20 +12,19 @@ use Exporter 5.57 qw/import/;
 
 our @EXPORT_OK = qw/query_handle/;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
-sub names_to_flags {
+sub _names_to_flags {
 	our %FLAG_FOR;
 	return reduce { $a | $b } map { $FLAG_FOR{$_} } @_;
 }
 
-sub has_flags {
-	my $check_flag = names_to_flags(@_);
+sub _has_flags {
+	my $check_flag = _names_to_flags(@_);
 	return sub {
 		my $iterator = shift;
-		my @results;
 		while (my ($name, $arguments, $flags) = $iterator->()) {
 			my $entry = $flags & $check_flag;
 			return 1 if $entry;
@@ -34,9 +33,9 @@ sub has_flags {
 	}
 }
 
-sub lacks_flags {
+sub _lack_flags {
 	my @args = @_;
-	my $func = has_flags(@args);
+	my $func = _has_flags(@args);
 	return sub {
 		return not $func->(@_);
 	}
@@ -44,16 +43,16 @@ sub lacks_flags {
 
 my %is_binary = map { ( $_ => 1) } qw/unix stdio perlio crlf flock creat excl/;
 
-my $nonbinary_flags = names_to_flags('UTF8', 'CRLF');
+my $nonbinary_flags = _names_to_flags('UTF8', 'CRLF');
 
 my %query_for = (
-	writeable => has_flags('CANWRITE'),
-	readable  => has_flags('CANREAD'),
-	buffered  => lacks_flags('UNBUF'),
-	open      => has_flags('OPEN'),
-	temp      => has_flags('TEMP'),
-	crlf      => has_flags('CRLF'),
-	utf8      => has_flags('UTF8'),
+	writeable => _has_flags('CANWRITE'),
+	readable  => _has_flags('CANREAD'),
+	buffered  => _lack_flags('UNBUF'),
+	open      => _has_flags('OPEN'),
+	temp      => _has_flags('TEMP'),
+	crlf      => _has_flags('CRLF'),
+	utf8      => _has_flags('UTF8'),
 	binary    => sub {
 		my $iterator = shift;
 		while (my ($name, $arguments, $flags) = $iterator->()) {
@@ -62,8 +61,6 @@ my %query_for = (
 		return 1;
 	},
 );
-
-use namespace::clean -except => [ qw/import/ ];
 
 sub query_handle {
 	my ($fh, $query_name, @args) = @_;
@@ -83,7 +80,7 @@ PerlIO::Layers - Querying your filehandle's capabilities
 
 =head1 VERSION
 
-Version 0.001
+Version 0.002
 
 =head1 SYNOPSIS
 
@@ -107,17 +104,35 @@ This query a filehandle for some information. Currently supported queries includ
 
 =item * utf8
 
+Check whether the filehandle handles unicode
+
 =item * crlf
+
+Check whether the filehandle does crlf translation
 
 =item * binary
 
+Check whether the filehandle is binery. This test is pessimistic (for unknown layers it will assume it's not binary).
+
 =item * buffered
+
+Check whether the filehandle is buffered.
 
 =item * readable
 
+Check whether the filehandle is readable.
+
+=item * writeable
+
+Check whether the filehandle is writeable.
+
 =item * open
 
+Check whether the filehandle is open.
+
 =item * temp
+
+Check whether the filehandle refers to a temporary file.
 
 =back
 

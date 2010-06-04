@@ -1,5 +1,8 @@
 Revision history for PerlIO-Layers
 
+0.002   2010-06-04
+        Removed dependency on namespace::clean.
+
 0.001   2010-06-03
         First version, released on an unsuspecting world.
 

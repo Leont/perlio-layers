@@ -19,7 +19,6 @@ my $builder = Module::Build->new(
 		perl               => 5.008,
 		Exporter           => 5.57,
 		'List::MoreUtils'  => 0,
-		'namespace::clean' => 0,
 	},
     add_to_cleanup      => [ 'PerlIO-Layers-*' ],
     create_makefile_pl  => 'small',
