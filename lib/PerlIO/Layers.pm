@@ -12,7 +12,7 @@ use Exporter 5.57 qw/import/;
 
 our @EXPORT_OK = qw/query_handle/;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
 XSLoader::load(__PACKAGE__, $VERSION);
 
@@ -80,7 +80,7 @@ PerlIO::Layers - Querying your filehandle's capabilities
 
 =head1 VERSION
 
-Version 0.002
+Version 0.003
 
 =head1 SYNOPSIS
 
