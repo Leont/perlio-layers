@@ -1,8 +1,16 @@
 #!perl -T
 
-use Test::More tests => 14;
+use strict;
+use warnings FATAL => 'all';
+use Test::More tests => 16;
+use Data::Dumper;
 
-use PerlIO::Layers qw/query_handle/;
+use PerlIO::Layers qw/query_handle get_layers/;
+
+my %flags = map { map { ($_ => 1) } @{$_} } map {  $_->[2] } get_layers(\*STDOUT);
+
+ok $flags{OPEN}, 'STDOUT has OPEN flag';
+ok $flags{CANWRITE}, 'STDOUT has CANWRITE flag';
 
 is(query_handle(\*STDIN, 'readable'),   1, 'stdin is readable');
 is(query_handle(\*STDIN, 'writeable'),  0, 'stdin is not writable');
@@ -30,4 +38,4 @@ is(query_handle(\*STDIN, 'utf8'),       1, 'stdin is unicode after binmode \':ut
 
 binmode STDIN, ':raw';
 
-is(query_handle(\*STDIN, 'binary'),     1, 'stdin is binary');
+is(query_handle(\*STDIN, 'binary'),     1, 'stdin is binary') or diag Dumper(get_layers(\*STDIN));
