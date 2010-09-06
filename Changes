@@ -1,5 +1,11 @@
 Revision history for PerlIO-Layers
 
+0.004   2010-09-06
+        Added get_layers()
+
+0.003   2010-06-12
+        Skip some tests on automated testers, as stdin/stdout/stderr may not be open
+
 0.002   2010-06-04
         Removed dependency on namespace::clean.
 
