@@ -1,5 +1,9 @@
 Revision history for PerlIO-Layers
 
+0.006   2010-12-12
+        Added mappable and mapped tests
+        Added unit tests
+
 0.005   2010-09-08
         Fixed unit tests on Windows
 

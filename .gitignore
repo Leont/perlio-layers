@@ -14,4 +14,4 @@ PerlIO-Layers-*
 *.o
 *.c
 Makefile.PL
-META.yml
+*META.yml
