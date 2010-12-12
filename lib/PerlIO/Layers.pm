@@ -115,7 +115,7 @@ Version 0.005
 
  use PerlIO::Layers qw/query_handle/;
 
- if (!query_handle(\*STDOUT, binary)) {
+ if (!query_handle(\*STDOUT, 'binary')) {
      ...
  }
 
@@ -141,7 +141,15 @@ Check whether the filehandle does crlf translation
 
 =item * binary
 
-Check whether the filehandle is binery. This test is pessimistic (for unknown layers it will assume it's not binary).
+Check whether the filehandle is binary. This test is pessimistic (for unknown layers it will assume it's not binary).
+
+=item * mappable
+
+Checks whether the filehandle is memory mappable. It is the same as binary, except that the C<utf8> layer is accepted.
+
+=item * mapped
+
+Checks whether the C<mmap> layer is used.
 
 =item * buffered
 
@@ -167,7 +175,7 @@ Check whether the filehandle refers to a temporary file.
 
 =head2 get_layers($fh)
 
-Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values.
+Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values. You probably want to use query_layers instead.
 
 =over 4
 
