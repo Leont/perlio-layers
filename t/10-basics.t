@@ -1,8 +1,8 @@
-#!perl -T
+#!perl
 
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 15;
+use Test::More tests => 29;
 use Data::Dumper;
 
 use PerlIO::Layers qw/query_handle get_layers/;
@@ -29,12 +29,22 @@ SKIP: {
 	is(query_handle(\*STDERR, 'open'),      1, 'stderr is open');
 }
 
-is(query_handle(\*STDIN, 'crlf'),       int($^O eq 'MSWin32'), 'crlf is only true on Windows');
+my $is_win32 = int($^O eq 'MSWin32');
 
-is(query_handle(\*STDIN, 'utf8'),       0, 'stdin isn\'t unicode');
-binmode STDIN, ':utf8';
-is(query_handle(\*STDIN, 'utf8'),       1, 'stdin is unicode after binmode \':utf8\'');
+is(query_handle(\*STDIN, 'crlf'), $is_win32, 'crlf is only true on Windows');
 
-binmode STDIN, ':raw';
+my @types = (
+	['<', utf8 => 0, binary => !$is_win32, mappable => !$is_win32, crlf => $is_win32],
+	['<:utf8', utf8 => 1, binary => 0, mappable => 1, crlf => $is_win32],
+	['<:encoding(utf-8)', utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:crlf', utf8 => 0, binary => 0, mappable => 0, crlf => 1],
+	['<:mmap', 'mapped' => 1],
+);
 
-is(query_handle(\*STDIN, 'binary'),     1, 'stdin is binary') or diag Dumper(get_layers(\*STDIN));
+for my $type (@types) {
+	my ($mode, %result_for) = @{$type};
+	for my $test_type (keys %result_for) {
+		open my $fh, $mode, $0 or BAIL_OUT('Open failed');
+		is query_handle($fh, $test_type), $result_for{$test_type}, "File opened with $mode should return $result_for{$test_type} on test $test_type";
+	}
+}
