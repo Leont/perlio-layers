@@ -2,14 +2,13 @@
 
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 16;
+use Test::More tests => 15;
 use Data::Dumper;
 
 use PerlIO::Layers qw/query_handle get_layers/;
 
 my %flags = map { map { ($_ => 1) } @{$_} } map {  $_->[2] } get_layers(\*STDOUT);
 
-ok $flags{OPEN}, 'STDOUT has OPEN flag';
 ok $flags{CANWRITE}, 'STDOUT has CANWRITE flag';
 
 is(query_handle(\*STDIN, 'readable'),   1, 'stdin is readable');
