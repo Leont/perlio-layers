@@ -49,6 +49,7 @@ sub _lack_flags {
 my %is_binary = map { ( $_ => 1) } qw/unix stdio perlio crlf flock creat excl/;
 
 my $nonbinary_flags = _names_to_flags('UTF8', 'CRLF');
+my $crlf_flags      = _names_to_flags('CRLF');
 
 my %query_for = (
 	writeable => _has_flags('CANWRITE'),
@@ -64,6 +65,20 @@ my %query_for = (
 			return 0 if not $is_binary{$name} or $flags & $nonbinary_flags;
 		}
 		return 1;
+	},
+	'mappable' => sub {
+		my $iterator = shift;
+		while (my ($name, $arguments, $flags) = $iterator->()) {
+			return 0 if not $is_binary{$name} or $flags & $crlf_flags;
+		}
+		return 1;
+	},
+	'mapped'  => sub {
+		my $iterator = shift;
+		while (my ($name, $arguments, $flags) = $iterator->()) {
+			return 1 if $name eq 'mmap';
+		}
+		return 0;
 	},
 );
 
