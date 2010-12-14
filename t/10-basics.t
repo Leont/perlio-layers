@@ -2,12 +2,12 @@
 
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 51;
+use Test::More;
 use Data::Dumper;
 
 use PerlIO::Layers qw/query_handle get_layers/;
 
-my %flags = map { map { ($_ => 1) } @{$_} } map {  $_->[2] } get_layers(\*STDOUT);
+my %flags = map { ($_ => 1) } map {  @{ $_->[2] } } get_layers(\*STDOUT);
 
 ok $flags{CANWRITE}, 'STDOUT has CANWRITE flag';
 
@@ -20,14 +20,7 @@ is(query_handle(\*STDOUT, 'buffered'),  1, 'stdout is buffered');
 
 is(query_handle(\*STDERR, 'readable'),  0, 'stderr is readable');
 is(query_handle(\*STDERR, 'writeable'), 1, 'stderr is not writable');
-
-SKIP: {
-	skip('filehandles may not be open when automated testing', 3) if $ENV{AUTOMATED_TESTING};
-
-	is(query_handle(\*STDIN, 'open'),       1, 'stdin is open');
-	is(query_handle(\*STDOUT, 'open'),      1, 'stdout is open');
-	is(query_handle(\*STDERR, 'open'),      1, 'stderr is open');
-}
+is(query_handle(\*STDOUT, 'buffered'),  1, 'stdout is buffered');
 
 my $is_win32 = int($^O eq 'MSWin32');
 my $not_win32 = int !$is_win32;
@@ -35,15 +28,20 @@ my $not_win32 = int !$is_win32;
 is(query_handle(\*STDIN, 'crlf'), $is_win32, 'crlf is only true on Windows');
 
 my @types = (
-	['<', layer => { unix => 1, perlio => $not_win32, crlf => $is_win32 }, utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32],
-	['<:raw', utf8 => 0, binary => 1, mappable => 1, crlf => 0],
+	['<', utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32, buffered => 1, can_crlf => { unix => 0, crlf => $is_win32 }],
+	['<:bytes', layer => { crlf => $is_win32 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => $is_win32, buffered => 1],
+	['<:raw', layer => { unix => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => 0],
+	['<:raw:perlio', layer => { unix => 1, perlio => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => 0, buffered => 1 ],
 	['<:utf8', layer => { utf8 => 0 }, utf8 => 1, binary => 0, mappable => $not_win32, crlf => $is_win32],
-	['<:raw:utf8', utf8 => 1, binary => 0, mappable => 1, crlf => 0],
-	['<:encoding(utf-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
-	['<:crlf', layer => { perlio => $not_win32, crlf => 1 }, utf8 => 0, binary => 0, mappable => 0, crlf => 1],
-	['<:mmap', 'layer' => { mmap => 1 }, utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32],
-	['<:pop', layer => { unix => 1, perlio => 0, crlf => 0 }],
+	['<:raw:utf8', layer => { unix => 1 }, utf8 => 1, binary => 0, mappable => 1, crlf => 0],
+	['<:encoding(latin1)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:crlf', layer => { crlf => 1 }, utf8 => 0, binary => 0, mappable => 0, crlf => 1],
+	['<:pop', layer => { perlio => 0, crlf => 0, stdio => 0 }, buffered => 0, can_crlf => 0]
 );
+
+if ($^O ne 'MSWin32') {
+	push @types, ['<:mmap', 'layer' => { mmap => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, buffered => 1, can_crlf => 0];
+}
 
 for my $type (@types) {
 	my ($mode, %result_for) = @{$type};
@@ -60,3 +58,5 @@ for my $type (@types) {
 		}
 	}
 }
+
+done_testing();
