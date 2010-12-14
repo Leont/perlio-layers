@@ -2,7 +2,7 @@
 
 use strict;
 use warnings FATAL => 'all';
-use Test::More tests => 29;
+use Test::More tests => 51;
 use Data::Dumper;
 
 use PerlIO::Layers qw/query_handle get_layers/;
@@ -30,21 +30,33 @@ SKIP: {
 }
 
 my $is_win32 = int($^O eq 'MSWin32');
+my $not_win32 = int !$is_win32;
 
 is(query_handle(\*STDIN, 'crlf'), $is_win32, 'crlf is only true on Windows');
 
 my @types = (
-	['<', utf8 => 0, binary => !$is_win32, mappable => !$is_win32, crlf => $is_win32],
-	['<:utf8', utf8 => 1, binary => 0, mappable => 1, crlf => $is_win32],
-	['<:encoding(utf-8)', utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
-	['<:crlf', utf8 => 0, binary => 0, mappable => 0, crlf => 1],
-	['<:mmap', 'mapped' => 1],
+	['<', layer => { unix => 1, perlio => $not_win32, crlf => $is_win32 }, utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32],
+	['<:raw', utf8 => 0, binary => 1, mappable => 1, crlf => 0],
+	['<:utf8', layer => { utf8 => 0 }, utf8 => 1, binary => 0, mappable => $not_win32, crlf => $is_win32],
+	['<:raw:utf8', utf8 => 1, binary => 0, mappable => 1, crlf => 0],
+	['<:encoding(utf-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:crlf', layer => { perlio => $not_win32, crlf => 1 }, utf8 => 0, binary => 0, mappable => 0, crlf => 1],
+	['<:mmap', 'layer' => { mmap => 1 }, utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32],
+	['<:pop', layer => { unix => 1, perlio => 0, crlf => 0 }],
 );
 
 for my $type (@types) {
 	my ($mode, %result_for) = @{$type};
+	open my $fh, $mode, $0 or BAIL_OUT("Open failed: $!");
 	for my $test_type (keys %result_for) {
-		open my $fh, $mode, $0 or BAIL_OUT('Open failed');
-		is query_handle($fh, $test_type), $result_for{$test_type}, "File opened with $mode should return $result_for{$test_type} on test $test_type";
+		if (ref($result_for{$test_type})) {
+			my %compound = %{ $result_for{$test_type} };
+			for my $subtype (keys %compound) {
+				is query_handle($fh, $test_type, $subtype), $compound{$subtype}, "File opened with $mode should return $compound{$subtype} on test $test_type($subtype)" or diag Dumper get_layers($fh);
+			}
+		}
+		else {
+			is query_handle($fh, $test_type), $result_for{$test_type}, "File opened with $mode should return $result_for{$test_type} on test $test_type" or diag Dumper get_layers($fh);
+		}
 	}
 }
