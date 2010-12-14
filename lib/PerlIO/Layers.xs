@@ -4,9 +4,11 @@
 #include <XSUB.h>
 #include <perliol.h>
 
-#define CONSTANT(name, key, value) hv_store(get_hv("PerlIO::Layers::FLAG_FOR", TRUE), key, sizeof key - 1, newSVuv(value), 0)
+#define CONSTANT(name, key, value) hv_store(get_hv("PerlIO::Layers::" #name, TRUE), key, sizeof key - 1, newSVuv(value), 0)
 
-#define INSTANCE_CONSTANT(cons) CONSTANT(FLAGS, #cons, PERLIO_F_##cons)
+#define INSTANCE_CONSTANT(cons) CONSTANT(FLAG_FOR, #cons, PERLIO_F_##cons)
+
+#define KIND_CONSTANT(cons) CONSTANT(KIND_FOR, #cons, PERLIO_K_##cons)
 
 MODULE = PerlIO::Layers				PACKAGE = PerlIO::Layers
 
@@ -26,3 +28,25 @@ BOOT:
 	INSTANCE_CONSTANT(TEMP);
 	INSTANCE_CONSTANT(OPEN);
 	INSTANCE_CONSTANT(FASTGETS);
+	
+	KIND_CONSTANT(BUFFERED);
+	KIND_CONSTANT(RAW);
+	KIND_CONSTANT(CANCRLF);
+	KIND_CONSTANT(FASTGETS);
+	KIND_CONSTANT(MULTIARG);
+	KIND_CONSTANT(UTF8);
+
+SV*
+_get_kinds(handle);
+	PerlIO* handle;
+	PREINIT:
+	HV* ret = newHV();
+	CODE:
+	while (PerlIOBase(handle)) {
+		PerlIOl* current = PerlIOBase(handle);
+		hv_store(ret, current->tab->name, strlen(current->tab->name), newSViv(current->tab->kind), 0);
+		handle = PerlIONext(handle);
+	}
+	RETVAL = newRV_noinc((SV*)ret);
+	OUTPUT:
+		RETVAL
