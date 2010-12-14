@@ -46,7 +46,7 @@ sub _lack_flags {
 	}
 }
 
-my %is_binary = map { ( $_ => 1) } qw/unix stdio perlio crlf flock creat excl/;
+my %is_binary = map { ( $_ => 1) } qw/unix stdio perlio crlf flock creat excl mmap/;
 
 my $nonbinary_flags = _names_to_flags('UTF8', 'CRLF');
 my $crlf_flags      = _names_to_flags('CRLF');
@@ -66,17 +66,17 @@ my %query_for = (
 		}
 		return 1;
 	},
-	'mappable' => sub {
+	mappable  => sub {
 		my $iterator = shift;
 		while (my ($name, $arguments, $flags) = $iterator->()) {
 			return 0 if not $is_binary{$name} or $flags & $crlf_flags;
 		}
 		return 1;
 	},
-	'mapped'  => sub {
-		my $iterator = shift;
+	layer     => sub {
+		my ($iterator, $layer) = @_;
 		while (my ($name, $arguments, $flags) = $iterator->()) {
-			return 1 if $name eq 'mmap';
+			return 1 if $name eq $layer;
 		}
 		return 0;
 	},
