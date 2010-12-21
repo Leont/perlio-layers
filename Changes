@@ -1,5 +1,10 @@
 Revision history for PerlIO-Layers
 
+0.007   2010-12-21
+        Made layer type queryable
+        Made layer 'kinds' queryable
+        Added lots of tests
+
 0.006   2010-12-12
         Added mappable and mapped tests
         Added unit tests
