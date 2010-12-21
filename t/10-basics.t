@@ -29,7 +29,7 @@ is(query_handle(\*STDIN, 'crlf'), $is_win32, 'crlf is only true on Windows');
 
 my @types = (
 	['<', utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32, buffered => 1, can_crlf => { unix => 0, crlf => $is_win32 }],
-	['<:bytes', layer => { crlf => $is_win32 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => $is_win32, buffered => 1],
+	['<:bytes', layer => { crlf => $is_win32 }, utf8 => 0, binary => $not_win32, mappable => $not_win32, crlf => $is_win32, can_crlf => $is_win32, buffered => 1],
 	['<:raw', layer => { unix => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => 0],
 	['<:raw:perlio', layer => { unix => 1, perlio => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => 0, buffered => 1 ],
 	['<:utf8', layer => { utf8 => 0 }, utf8 => 1, binary => 0, mappable => $not_win32, crlf => $is_win32],
