@@ -1,5 +1,8 @@
 Revision history for PerlIO-Layers
 
+{{$NEXT}} 
+          Converted to Dist::Zilla
+
 0.007   2010-12-21
         Made layer type queryable
         Made layer 'kinds' queryable

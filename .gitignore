@@ -1,10 +1,4 @@
-blib*
-Makefile
-Makefile.old
-Build
-Build.bat
-_build*
-pm_to_blib*
+.build
 *.tar.gz
 .lwpcookies
 cover_db
@@ -13,5 +7,3 @@ PerlIO-Layers-*
 *.swp
 *.o
 *.c
-Makefile.PL
-*META.yml

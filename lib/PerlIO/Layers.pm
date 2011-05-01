@@ -12,9 +12,7 @@ use Exporter 5.57 qw/import/;
 
 our @EXPORT_OK = qw/query_handle get_layers/;
 
-our $VERSION = '0.007';
-
-XSLoader::load(__PACKAGE__, $VERSION);
+XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION);
 
 our %FLAG_FOR;
 sub _names_to_flags {
