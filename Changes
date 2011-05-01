@@ -1,6 +1,7 @@
 Revision history for PerlIO-Layers
 
 {{$NEXT}} 
+          No longer assume :raw can't be can_crlf for perl 5.14 compatibility
           Converted to Dist::Zilla
 
 0.007   2010-12-21
