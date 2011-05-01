@@ -20,7 +20,7 @@ is(query_handle(\*STDOUT, 'buffered'),  1, 'stdout is buffered');
 
 is(query_handle(\*STDERR, 'readable'),  0, 'stderr is readable');
 is(query_handle(\*STDERR, 'writeable'), 1, 'stderr is not writable');
-is(query_handle(\*STDOUT, 'buffered'),  1, 'stdout is buffered');
+is(query_handle(\*STDERR, 'buffered'),  1, 'stderr is buffered');
 
 my $is_win32 = int($^O eq 'MSWin32');
 my $not_win32 = int !$is_win32;
@@ -34,6 +34,9 @@ my @types = (
 	['<:raw:perlio', layer => { unix => 1, perlio => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, can_crlf => 0, buffered => 1 ],
 	['<:utf8', layer => { utf8 => 0 }, utf8 => 1, binary => 0, mappable => $not_win32, crlf => $is_win32],
 	['<:raw:utf8', layer => { unix => 1 }, utf8 => 1, binary => 0, mappable => 1, crlf => 0],
+	['<:encoding(utf8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:encoding(utf-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:encoding(UTF-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
 	['<:encoding(latin1)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
 	['<:crlf', layer => { crlf => 1 }, utf8 => 0, binary => 0, mappable => 0, crlf => 1],
 	['<:pop', layer => { perlio => 0, crlf => 0, stdio => 0 }, buffered => 0, can_crlf => 0]
