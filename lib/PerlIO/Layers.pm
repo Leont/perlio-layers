@@ -114,15 +114,9 @@ sub get_layers {
 
 1;    # End of PerlIO::Layers
 
+# ABSTRACT: Querying your filehandle's capabilities
+
 __END__
-
-=head1 NAME
-
-PerlIO::Layers - Querying your filehandle's capabilities
-
-=head1 VERSION
-
-Version 0.007
 
 =head1 SYNOPSIS
 
@@ -134,11 +128,9 @@ Version 0.007
 
 =head1 DESCRIPTION
 
-Perl's filehandles are implemented as a stack of layers, with the bottom-most usually doing the actual IO and the higher ones doing buffering, encoding/decoding or transformations. PerlIO::Layers allows you to query the filehandle's properties concerning there layers.
+Perl's filehandles are implemented as a stack of layers, with the bottom-most usually doing the actual IO and the higher ones doing buffering, encoding/decoding or transformations. PerlIO::Layers allows you to query the filehandle's properties concerning these layers.
 
-=head1 SUBROUTINES
-
-=head2 query_handle($fh, $query_name [, $layer])
+=func query_handle($fh, $query_name [, $layer])
 
 This query a filehandle for some information. All queries can take an optional argument, that will test for that layer's properties instead of all layers of the handle. Currently supported queries include:
 
@@ -190,59 +182,9 @@ Checks whether layer $argument (or any layer if $argument it not given) can do c
 
 =back
 
-=head2 get_layers($fh)
+=func get_layers($fh)
 
-Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values. You probably want to use query_layers instead.  query_handle provides a more high level interface to this, you should probably use that when you can.
-
-This function is deprecated and will be removed in a future version of PerlIO::Layers.
-
-=head1 AUTHOR
-
-Leon Timmermans, C<< <leont at cpan.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-perlio-layers at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=PerlIO-Layers>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc PerlIO::Layers
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=PerlIO-Layers>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/PerlIO-Layers>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/PerlIO-Layers>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/PerlIO-Layers/>
-
-=back
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2010 Leon Timmermans.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values. You probably want to use query_layers instead. C<query_handle> provides a more high level interface to this, you should probably use that when you can.
 
 =cut
 
