@@ -6,11 +6,11 @@ use warnings FATAL => 'all';
 use XSLoader;
 use PerlIO ();
 use Carp qw/croak/;
-use List::Util qw/reduce/;
+use List::Util qw/reduce max/;
 use List::MoreUtils qw/natatime/;
 use Exporter 5.57 qw/import/;
 
-our @EXPORT_OK = qw/query_handle get_layers/;
+our @EXPORT_OK = qw/query_handle get_layers get_buffer_sizes/;
 
 XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION);
 
@@ -94,6 +94,11 @@ my %layer_query_for = (
 	},
 	buffered => _is_kind('BUFFERED'),
 	can_crlf => _is_kind('CANCRLF'),
+	'line_buffered' => _has_flags('LINEBUF'),
+	buffer_size => sub {
+		my ($handle, $size) = @_;
+		return max(get_buffer_sizes($handle)) == $size;
+	}
 );
 
 sub query_handle {

@@ -50,3 +50,25 @@ _get_kinds(handle);
 	RETVAL = newRV_noinc((SV*)ret);
 	OUTPUT:
 		RETVAL
+
+IV
+get_buffer_sizes(handle);
+	PerlIO* handle;
+	PREINIT:
+		PerlIO* current;
+		int counter = 0;
+	PPCODE:
+		for (current = handle; PerlIONext(current); current = PerlIONext(current)) {
+			PerlIOBuf* buffer;
+			if (!(PerlIOBase(current)->tab->kind & PERLIO_K_BUFFERED))
+				continue;
+			buffer = PerlIOSelf(current, PerlIOBuf);
+			if (!buffer->bufsiz && !buffer->buf)
+				PerlIO_get_base(current);
+			mXPUSHu(buffer->bufsiz);
+			counter++;
+		}
+		if (!counter)
+			Perl_croak(aTHX_ "Handle not buffered, aborting");
+		PUTBACK;
+
