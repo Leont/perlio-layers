@@ -135,7 +135,7 @@ __END__
 
 Perl's filehandles are implemented as a stack of layers, with the bottom-most usually doing the actual IO and the higher ones doing buffering, encoding/decoding or transformations. PerlIO::Layers allows you to query the filehandle's properties concerning these layers.
 
-=func query_handle($fh, $query_name [, $layer])
+=func query_handle($fh, $query_name [, $argument])
 
 This query a filehandle for some information. All queries can take an optional argument, that will test for that layer's properties instead of all layers of the handle. Currently supported queries include:
 
@@ -143,7 +143,7 @@ This query a filehandle for some information. All queries can take an optional a
 
 =item * layer
 
-Check the presence of a certain layer. Unlike all other properties $layer is mandatory for this query.
+Check the presence of a certain layer. Unlike most other properties C<$argument> is mandatory for this query.
 
 =item * utf8
 
@@ -183,7 +183,15 @@ Check whether the filehandle/layer refers to a temporary file.
 
 =item * can_crlf
 
-Checks whether layer $argument (or any layer if $argument it not given) can do crlf translation.
+Checks whether layer C<$argument> (or any layer if C<$argument> it not given) can do crlf translation.
+
+=item * line_buffered
+
+Check whether the filehandle is in line-buffering mode.
+
+=item * buffer_size
+
+Check whether the buffer size is equal to C<$argument>.
 
 =back
 
