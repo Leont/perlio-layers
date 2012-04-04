@@ -1,6 +1,6 @@
 package PerlIO::Layers;
 
-use 5.008;
+use 5.008_001;
 use strict;
 use warnings FATAL => 'all';
 use XSLoader;
