@@ -1,6 +1,8 @@
 Revision history for PerlIO-Layers
 
 {{$NEXT}}
+
+0.009     2012-04-04 22:56:42 Europe/Amsterdam
           Fixed fatal error on Windows on perl 5.14+
           Added get_buffer_sized method
           Added line_buffered and autoflush checks
