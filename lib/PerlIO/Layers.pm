@@ -204,5 +204,9 @@ Check whether the buffer size is equal to C<$argument>.
 
 Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values. You probably want to use query_layers instead. C<query_handle> provides a more high level interface to this, you should probably use that when you can.
 
+=func get_buffer_sizes($fh)
+
+Returns a list of buffer sizes for all buffered layers. Unbuffered layers are skipped.
+
 =cut
 
