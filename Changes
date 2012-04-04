@@ -1,6 +1,10 @@
 Revision history for PerlIO-Layers
 
 {{$NEXT}}
+          Fixed fatal error on Windows on perl 5.14+
+          Added get_buffer_sized method
+          Added line_buffered and autoflush checks
+          Increased minimal perl version to 5.8.1, as that's when PerlIO::get_layers was introduced.
 
 0.008     2011-05-01 22:40:59 Europe/Bucharest 
           No longer assume :raw can't be can_crlf for perl 5.14 compatibility
