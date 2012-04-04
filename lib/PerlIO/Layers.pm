@@ -94,7 +94,8 @@ my %layer_query_for = (
 	},
 	buffered => _is_kind('BUFFERED'),
 	can_crlf => _is_kind('CANCRLF'),
-	'line_buffered' => _has_flags('LINEBUF'),
+	line_buffered => _has_flags('LINEBUF'),
+	autoflush => _has_flags('UNBUF'),
 	buffer_size => sub {
 		my ($handle, $size) = @_;
 		return max(get_buffer_sizes($handle)) == $size;
@@ -188,6 +189,10 @@ Checks whether layer C<$argument> (or any layer if C<$argument> it not given) ca
 =item * line_buffered
 
 Check whether the filehandle is in line-buffering mode.
+
+=item * autoflush
+
+Checks wheter the filehandle is in unbuffering mode. Note that this is not the opposite of buffering, but more similar to autoflush, hence the name of this test.
 
 =item * buffer_size
 
