@@ -58,7 +58,7 @@ get_buffer_sizes(handle);
 		PerlIO* current;
 		int counter = 0;
 	PPCODE:
-		for (current = handle; PerlIONext(current); current = PerlIONext(current)) {
+		for (current = handle; *current; current = PerlIONext(current)) {
 			PerlIOBuf* buffer;
 			if (!(PerlIOBase(current)->tab->kind & PERLIO_K_BUFFERED))
 				continue;
