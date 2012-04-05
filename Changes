@@ -1,6 +1,8 @@
 Revision history for PerlIO-Layers
 
 {{$NEXT}}
+
+0.010     2012-04-05 15:20:18 Europe/Amsterdam
           Prevent segfault that happened on some systems
 
 0.009     2012-04-04 22:56:42 Europe/Amsterdam
