@@ -7,7 +7,6 @@ use XSLoader;
 use PerlIO ();
 use Carp qw/croak/;
 use List::Util qw/reduce max/;
-use List::MoreUtils qw/natatime/;
 use Exporter 5.57 qw/import/;
 
 our @EXPORT_OK = qw/query_handle get_layers get_buffer_sizes/;
@@ -28,8 +27,8 @@ sub _has_flags {
 	my $check_flag = _names_to_flags(@_);
 	return sub {
 		my ($fh, $layer) = @_;
-		my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
-		while (my ($name, $arguments, $flags) = $iterator->()) {
+		my @info = PerlIO::get_layers($fh, details => 1);
+		while (my ($name, $arguments, $flags) = splice @info, 0, 3) {
 			next if defined $layer and $name ne $layer;
 			my $entry = $flags & $check_flag;
 			return 1 if $entry;
@@ -68,8 +67,8 @@ my %layer_query_for = (
 	utf8      => _has_flags('UTF8'),
 	binary    => sub {
 		my ($fh, $layer) = @_;
-		my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
-		while (my ($name, $arguments, $flags) = $iterator->()) {
+		my @info = PerlIO::get_layers($fh, details => 1);
+		while (my ($name, $arguments, $flags) = splice @info, 0, 3) {
 			next if defined $layer and $name ne $layer;
 			return 0 if not $is_binary{$name} or $flags & $nonbinary_flags;
 		}
@@ -77,8 +76,8 @@ my %layer_query_for = (
 	},
 	mappable  => sub {
 		my ($fh, $layer) = @_;
-		my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
-		while (my ($name, $arguments, $flags) = $iterator->()) {
+		my @info = PerlIO::get_layers($fh, details => 1);
+		while (my ($name, $arguments, $flags) = splice @info, 0, 3) {
 			next if defined $layer and $name ne $layer;
 			return 0 if not $is_binary{$name} or $flags & $crlf_flags;
 		}
@@ -86,8 +85,8 @@ my %layer_query_for = (
 	},
 	layer     => sub {
 		my ($fh, $layer) = @_;
-		my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
-		while (my ($name, $arguments, $flags) = $iterator->()) {
+		my @info = PerlIO::get_layers($fh, details => 1);
+		while (my ($name, $arguments, $flags) = splice @info, 0, 3) {
 			return 1 if $name eq $layer;
 		}
 		return 0;
@@ -111,8 +110,8 @@ sub query_handle {
 sub get_layers {
 	my $fh = shift;
 	my @results;
-	my $iterator = natatime(3, PerlIO::get_layers($fh, details => 1));
-	while (my ($name, $arguments, $flags) = $iterator->()) {
+	my @info = PerlIO::get_layers($fh, details => 1);
+	while (my ($name, $arguments, $flags) = splice @info, 0, 3) {
 		push @results, [ $name, $arguments, [ _flag_names($flags) ] ];
 	}
 	return @results;
