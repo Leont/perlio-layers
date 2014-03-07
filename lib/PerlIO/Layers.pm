@@ -201,7 +201,73 @@ Check whether the buffer size is equal to C<$argument>.
 
 =func get_layers($fh)
 
-Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values. You probably want to use query_layers instead. C<query_handle> provides a more high level interface to this, you should probably use that when you can.
+Gets information on the layers of a filehandle. It's a list with whose entries have 3 elements: the name of the layer, the arguments of the layer (may be undef) and an arrayref with the flags of the layer as strings. The flags array can contain any of these values:
+
+=over 4
+
+=item * EOF
+
+End of file has been reached.
+
+=item * CANWRITE
+
+Writes are permitted, i.e. opened as ">" or "+<" or ">>", etc.
+
+=item * CANREAD
+
+Reads are permitted i.e. opened "<" or "+>".
+
+=item * ERROR
+
+An error has occurred.
+
+=item * TRUNCATE
+
+Truncate file suggested by open mode.
+
+=item * APPEND
+
+All writes should be appends.
+
+=item * CRLF
+
+Layer is performing Win32-like "\n" mapped to CR,LF for output and CR,LF mapped to "\n" for input. Normally the provided "crlf" layer is the only layer that need bother about this. C<binmode> will mess with this flag rather than add/remove layers if the PERLIO_K_CANCRLF bit is set for the layers class.
+
+=item * UTF8
+
+Data written to this layer should be UTF-8 encoded; data provided by this layer should be considered UTF-8 encoded. Can be set on any layer by ":utf8" dummy layer. Also set on ":encoding" layer.
+
+=item * UNBUF
+
+Layer is unbuffered - i.e. write to next layer down should occur for each write to this layer.
+
+=item * WRBUF
+
+The buffer for this layer currently holds data written to it but not sent to next layer.
+
+=item * RDBUF
+
+The buffer for this layer currently holds unconsumed data read from layer below.
+
+=item * LINEBUF
+
+Layer is line buffered. Write data should be passed to next layer down whenever a "\n" is seen. Any data beyond the "\n" should then be processed.
+
+=item * TEMP
+
+File has been unlink()ed, or should be deleted on close().
+
+=item * OPEN
+
+Handle is open.
+
+=item * FASTGETS
+
+This instance of this layer supports the "fast gets" interface. Normally set based on PERLIO_K_FASTGETS for the class and by the existence of the function(s) in the table. However a class that normally provides that interface may need to avoid it on a particular instance. The "pending" layer needs to do this when it is pushed above a layer which does not support the interface.
+
+=back
+
+C<query_handle> provides a more high level interface to this, you should probably use that when you can.
 
 =func get_buffer_sizes($fh)
 
