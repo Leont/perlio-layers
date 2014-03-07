@@ -35,10 +35,10 @@ my @types = (
 	['<:raw:perlio', layer => { unix => 1, perlio => 1 }, utf8 => 0, binary => 1, mappable => 1, crlf => 0, buffered => 1 ],
 	['<:utf8', layer => { utf8 => 0 }, utf8 => 1, binary => 0, mappable => $not_win32, crlf => $is_win32],
 	['<:raw:utf8', layer => { unix => 1 }, utf8 => 1, binary => 0, mappable => 1, crlf => 0],
-	['<:encoding(utf8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
-	['<:encoding(utf-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
-	['<:encoding(UTF-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
-	['<:encoding(latin1)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0, crlf => $is_win32],
+	['<:encoding(utf8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0],
+	['<:encoding(utf-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0],
+	['<:encoding(UTF-8)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0],
+	['<:encoding(latin1)', layer => { encoding => 1 }, utf8 => 1, binary => 0, mappable => 0],
 	['<:crlf', layer => { crlf => 1 }, utf8 => 0, binary => 0, mappable => 0, crlf => 1],
 	['<:pop', layer => { perlio => 0, crlf => 0, stdio => 0 }, buffered => 0, can_crlf => 0]
 );

@@ -2,6 +2,7 @@ Revision history for PerlIO-Layers
 
 {{$NEXT}}
           Got rid of natatime/List::MoreUtils
+          Remove problematic test on Windows
 
 0.010     2012-04-05 15:20:18 Europe/Amsterdam
           Prevent segfault that happened on some systems
