@@ -191,7 +191,7 @@ Check whether the filehandle is in line-buffering mode.
 
 =item * autoflush
 
-Checks wheter the filehandle is in unbuffering mode. Note that this is not the opposite of buffering, but more similar to autoflush, hence the name of this test.
+Checks whether the filehandle is in unbuffering mode. Note that this is not the opposite of buffering, but more similar to autoflush, hence the name of this test.
 
 =item * buffer_size
 
