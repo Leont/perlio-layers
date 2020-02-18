@@ -1,6 +1,7 @@
 Revision history for PerlIO-Layers
 
 {{$NEXT}}
+          Add ppport.h for backwards compatibility
 
 0.011     2014-03-07 15:20:03CET+0100 Europe/Amsterdam
           Got rid of natatime/List::MoreUtils
